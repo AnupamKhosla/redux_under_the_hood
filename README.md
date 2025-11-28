@@ -5,7 +5,7 @@ https://github.com/AnupamKhosla/redux_under_the_hood/blob/main/src/redux.js
 
 ### chatgpt discussion to make this
 
-https://github.com/AnupamKhosla/redux_under_the_hood/blob/main/src/chatgpt.md
+https://github.com/AnupamKhosla/redux_under_the_hood/blob/main/chatgpt.md
 
 
 This is a reconstruction of redux working under the hood with basic js. This will help the reader understand, how redux work underneath.
