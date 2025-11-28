@@ -1,15 +1,13 @@
 {
-  "name": "custom-redux-todo",
-  "version": "1.0.0",
+  "name": "custom-redux-tasks",
   "private": true,
+  "version": "1.0.0",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "scripts": {
-    "start": "vite"
-  },
   "devDependencies": {
     "vite": "^5.0.0"
-  }
+  },
+  "scripts": { "start": "vite" }
 }

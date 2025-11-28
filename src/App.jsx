@@ -1,54 +1,47 @@
-import React, { useState } from 'react';
-import { store, useStoreSelector, makeSelectTodo, selectOrder } from './redux';
+import React,{useState} from 'react';
+import {store,useStoreSelector,selectTaskOrder,makeSelectTask} from './redux.js';
 
-export default function App() {
-  return (
-    <div style={{ padding: 20 }}>
-      <h2>Custom Redux Todo</h2>
-      <AddTodo />
-      <TodoList />
-    </div>
-  );
+export default function App(){
+  return <div style={{padding:20}}>
+    <h2>Custom Redux Tasks</h2>
+    <AddTask/>
+    <TaskList/>
+  </div>;
 }
 
-function AddTodo() {
-  const [text, setText] = useState('');
-  const add = () => {
-    if (text.trim()) {
-      store.dispatch({ type: "todo/add", text });
-      setText('');
+function AddTask(){
+  const [t,setT]=useState('');
+  const add=()=>{ if(t.trim()){ store.dispatch({type:'task/add',text:t}); setT(''); } };
+  return <>
+    <input value={t} onChange={e=>setT(e.target.value)}/>
+    <button onClick={add}>Add</button>
+  </>;
+}
+
+function TaskList(){
+  const tasks=useStoreSelector(store,selectTaskOrder);
+  return <ul>{tasks.map(x=><TaskItem key={x.id} id={x.id}/>)}</ul>;
+}
+
+function TaskItem({id}){
+  const sel=React.useMemo(()=>makeSelectTask(id),[id]);
+  const t=useStoreSelector(store,sel);
+  const [edit,setEdit]=useState(false);
+  const [txt,setTxt]=useState(t.text);
+  const save=()=>{ store.dispatch({type:'task/edit',id,text:txt}); setEdit(false); };
+  return <li>
+    <input type="checkbox" checked={t.done} onChange={()=>store.dispatch({type:'task/toggle',id})}/>
+    {" "}
+    {edit?
+      <>
+        <input value={txt} onChange={e=>setTxt(e.target.value)}/>
+        <button onClick={save}>Save</button>
+      </>:
+      <>
+        <span style={{textDecoration:t.done?'line-through':'none'}}>{t.text}</span>
+        <button onClick={()=>{setEdit(true);setTxt(t.text);}}>Edit</button>
+      </>
     }
-  };
-
-  return (
-    <div>
-      <input value={text} onChange={e => setText(e.target.value)} />
-      <button onClick={add}>Add</button>
-    </div>
-  );
-}
-
-function TodoList() {
-  const list = useStoreSelector(store, selectOrder);
-  return (
-    <ul>
-      {list.map(t => <TodoItem key={t.id} id={t.id} />)}
-    </ul>
-  );
-}
-
-function TodoItem({ id }) {
-  const selector = React.useMemo(() => makeSelectTodo(id), [id]);
-  const todo = useStoreSelector(store, selector);
-
-  return (
-    <li>
-      <label>
-        <input type="checkbox"
-               checked={todo.done}
-               onChange={() => store.dispatch({ type: "todo/toggle", id })} />
-        {todo.text}
-      </label>
-    </li>
-  );
+    <button style={{color:'red'}} onClick={()=>store.dispatch({type:'task/delete',id})}>Delete</button>
+  </li>;
 }
