@@ -1,24 +1,27 @@
+// App.jsx
 import React, { useState, useMemo } from "react";
 import {
   store,
-  useStoreSelector,
   selectTaskOrder,
-  makeSelectTask,
-} from "./redux.js";
+  makeSelectTask
+} from "./reduxTree.js";
+import { ReduxProvider, useStoreSelector } from "./reduxTreeReact.jsx";
 
 export default function App() {
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Custom Redux Tasks</h2>
-      <AddTask />
-      <TaskList />
-    </div>
+    <ReduxProvider>
+      <div style={{ padding: 20 }}>
+        <h2>Custom Redux Tasks</h2>
+        <AddTask />
+        <TaskList />
+      </div>
+    </ReduxProvider>
   );
 }
 
-/* -------------------------
-   Add Task Component
-   ------------------------- */
+/* ============================================
+   Add Task
+============================================ */
 function AddTask() {
   const [text, setText] = useState("");
 
@@ -37,12 +40,11 @@ function AddTask() {
   );
 }
 
-/* -------------------------
-   Task List Component
-   ------------------------- */
+/* ============================================
+   Task List
+============================================ */
 function TaskList() {
-  // Subscribe to the ordered list of task objects
-  const tasks = useStoreSelector(store, selectTaskOrder);
+  const tasks = useStoreSelector(selectTaskOrder);
 
   return (
     <ul>
@@ -53,13 +55,12 @@ function TaskList() {
   );
 }
 
-/* -------------------------
-   Single Task Component
-   ------------------------- */
+/* ============================================
+   Single Task
+============================================ */
 function TaskItem({ id }) {
-  // Selector for this specific task
   const selector = useMemo(() => makeSelectTask(id), [id]);
-  const task = useStoreSelector(store, selector);
+  const task = useStoreSelector(selector);
 
   const [edit, setEdit] = useState(false);
   const [text, setText] = useState(task.text);
@@ -71,14 +72,12 @@ function TaskItem({ id }) {
 
   return (
     <li>
-      {/* Toggle checkbox */}
       <input
         type="checkbox"
         checked={task.done}
         onChange={() => store.dispatch({ type: "task/toggle", id })}
-      />{" "}
+      />
 
-      {/* Edit or display mode */}
       {edit ? (
         <>
           <input value={text} onChange={(e) => setText(e.target.value)} />
@@ -86,11 +85,7 @@ function TaskItem({ id }) {
         </>
       ) : (
         <>
-          <span
-            style={{
-              textDecoration: task.done ? "line-through" : "none",
-            }}
-          >
+          <span style={{ textDecoration: task.done ? "line-through" : "none" }}>
             {task.text}
           </span>
           <button
@@ -104,7 +99,6 @@ function TaskItem({ id }) {
         </>
       )}
 
-      {/* Delete */}
       <button
         style={{ color: "red" }}
         onClick={() => store.dispatch({ type: "task/delete", id })}
