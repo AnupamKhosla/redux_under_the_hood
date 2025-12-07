@@ -3,7 +3,7 @@
 // using the minimal redux implementation exported from redux.js (keep redux.js untouched).
 
 import React, { useState } from 'react';
-import { createStore, combineReducers, useStoreSelector } from './redux.js';
+import { createStore, combineReducers, useStoreSelector } from './redux_basic.js';
 
 // -----------------------------
 // Reducers (3-4 different slices)
